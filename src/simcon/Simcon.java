@@ -41,7 +41,7 @@ public class Simcon {
 
         // Configuration des hints de la fenêtre
         glfwDefaultWindowHints();
-        glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE); // La fenêtre restera cachée après sa création
+        glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE); // La fenêtre restera cachée après sa création.
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
         // Création de la fenêtre
