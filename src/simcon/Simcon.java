@@ -14,8 +14,6 @@ import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 public class Simcon {
-    // Test git 2 Changement
-    // Taille de la fenêtre
     private int width = 800;
     private int height = 600;
     private long window;
@@ -23,7 +21,6 @@ public class Simcon {
     public void run() {
         init();
         loop();
-        // Libération des ressources et fermeture
         glfwFreeCallbacks(window);
         glfwDestroyWindow(window);
         glfwTerminate();
@@ -31,35 +28,28 @@ public class Simcon {
     }
 
     private void init() {
-        // Configuration du callback d'erreur
         GLFWErrorCallback.createPrint(System.err).set();
-
-        // Initialisation de GLFW
         if (!glfwInit()) {
             throw new IllegalStateException("Impossible d'initialiser GLFW");
         }
 
-        // Configuration des hints de la fenêtre
         glfwDefaultWindowHints();
-        glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE); // La fenêtre restera cachée après sa création
+        glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
-        // Création de la fenêtre
         window = glfwCreateWindow(width, height, "SimConLWJGL", NULL, NULL);
         if (window == NULL) {
             throw new RuntimeException("Échec de la création de la fenêtre GLFW");
         }
 
-        // Configuration d'un callback clavier (ici, pour fermer la fenêtre avec la touche Échap)
         glfwSetKeyCallback(window, (win, key, scancode, action, mods) -> {
-            if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE )
+            if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE)
                 glfwSetWindowShouldClose(win, true);
         });
 
-        // Centrage de la fenêtre sur l'écran
         try (MemoryStack stack = stackPush()) {
-            IntBuffer pWidth = stack.mallocInt(1); // int*
-            IntBuffer pHeight = stack.mallocInt(1); // int*
+            IntBuffer pWidth = stack.mallocInt(1);
+            IntBuffer pHeight = stack.mallocInt(1);
             glfwGetWindowSize(window, pWidth, pHeight);
             long monitor = glfwGetPrimaryMonitor();
             GLFWVidMode vidmode = glfwGetVideoMode(monitor);
@@ -70,33 +60,38 @@ public class Simcon {
             );
         }
 
-        // Création du contexte OpenGL et activation du contexte courant
         glfwMakeContextCurrent(window);
-        // Activation de la synchronisation verticale (v-sync)
         glfwSwapInterval(1);
-        // Affichage de la fenêtre
         glfwShowWindow(window);
     }
 
     private void loop() {
-        // Initialisation des capacités OpenGL
         GL.createCapabilities();
 
-        // Configuration d'une projection orthographique pour avoir un repère en pixels
+        // Activer le test de profondeur
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LESS);
+
+        // Configuration de la projection en perspective
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
-        // On définit (0,0) en haut à gauche et (width, height) en bas à droite
-        glOrtho(0, width, height, 0, -1, 1);
+        float aspectRatio = (float) width / height;
+        float fov = 45.0f;
+        float near = 0.1f;
+        float far = 100.0f;
+        float top = (float) Math.tan(Math.toRadians(fov / 2)) * near;
+        float bottom = -top;
+        float left = bottom * aspectRatio;
+        float right = top * aspectRatio;
+        glFrustum(left, right, bottom, top, near, far);
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
 
-        // Boucle principale (équivalent à AnimationTimer en JavaFX)
         while (!glfwWindowShouldClose(window)) {
             input();
             update();
             render();
 
-            // Échange des buffers et traitement des événements
             glfwSwapBuffers(window);
             glfwPollEvents();
         }
@@ -111,18 +106,54 @@ public class Simcon {
     }
 
     private void render() {
-        // Efface l'écran
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glLoadIdentity();
 
-        // Dessine un carré rouge à (100, 100) de taille 200x200
-        glColor3f(1.0f, 0.0f, 0.0f); // Couleur rouge
+        // Déplacer la caméra en arrière pour voir le cube
+        glTranslatef(0.0f, 0.0f, -5.0f);
 
-        // Utilisation du mode immédiat (attention : ce mode est obsolète en OpenGL moderne)
+        glRotatef(65.0f, 1.0f, 1.0f, 0.0f);
+
+        glColor3f(1.0f, 0.0f, 0.0f); // Cube rouge
+
         glBegin(GL_QUADS);
-        glVertex2f(100, 100);
-        glVertex2f(300, 100);
-        glVertex2f(300, 300);
-        glVertex2f(100, 300);
+
+        // Face avant
+        glVertex3f(-1.0f, -1.0f,  1.0f);
+        glVertex3f( 1.0f, -1.0f,  1.0f);
+        glVertex3f( 1.0f,  1.0f,  1.0f);
+        glVertex3f(-1.0f,  1.0f,  1.0f);
+
+        // Face arrière
+        glVertex3f(-1.0f, -1.0f, -1.0f);
+        glVertex3f(-1.0f,  1.0f, -1.0f);
+        glVertex3f( 1.0f,  1.0f, -1.0f);
+        glVertex3f( 1.0f, -1.0f, -1.0f);
+
+        // Face gauche
+        glVertex3f(-1.0f, -1.0f, -1.0f);
+        glVertex3f(-1.0f, -1.0f,  1.0f);
+        glVertex3f(-1.0f,  1.0f,  1.0f);
+        glVertex3f(-1.0f,  1.0f, -1.0f);
+
+        // Face droite
+        glVertex3f(1.0f, -1.0f, -1.0f);
+        glVertex3f(1.0f,  1.0f, -1.0f);
+        glVertex3f(1.0f,  1.0f,  1.0f);
+        glVertex3f(1.0f, -1.0f,  1.0f);
+
+        // Face dessus
+        glVertex3f(-1.0f, 1.0f, -1.0f);
+        glVertex3f(-1.0f, 1.0f,  1.0f);
+        glVertex3f( 1.0f, 1.0f,  1.0f);
+        glVertex3f( 1.0f, 1.0f, -1.0f);
+
+        // Face dessous
+        glVertex3f(-1.0f, -1.0f, -1.0f);
+        glVertex3f( 1.0f, -1.0f, -1.0f);
+        glVertex3f( 1.0f, -1.0f,  1.0f);
+        glVertex3f(-1.0f, -1.0f,  1.0f);
+
         glEnd();
     }
 
