@@ -119,36 +119,42 @@ public class Simcon {
         glBegin(GL_QUADS);
 
         // Face avant
+        glColor3f(1.0f,0.0f, 0.0f);
         glVertex3f(-1.0f, -1.0f,  1.0f);
         glVertex3f( 1.0f, -1.0f,  1.0f);
         glVertex3f( 1.0f,  1.0f,  1.0f);
         glVertex3f(-1.0f,  1.0f,  1.0f);
 
         // Face arrière
+        glColor3f(0.0f,1.0f, 0.0f);
         glVertex3f(-1.0f, -1.0f, -1.0f);
         glVertex3f(-1.0f,  1.0f, -1.0f);
         glVertex3f( 1.0f,  1.0f, -1.0f);
         glVertex3f( 1.0f, -1.0f, -1.0f);
 
         // Face gauche
+        glColor3f(0.0f,0.0f, 1.0f);
         glVertex3f(-1.0f, -1.0f, -1.0f);
         glVertex3f(-1.0f, -1.0f,  1.0f);
         glVertex3f(-1.0f,  1.0f,  1.0f);
         glVertex3f(-1.0f,  1.0f, -1.0f);
 
         // Face droite
+        glColor3f(1.0f,1.0f, 0.0f);
         glVertex3f(1.0f, -1.0f, -1.0f);
         glVertex3f(1.0f,  1.0f, -1.0f);
         glVertex3f(1.0f,  1.0f,  1.0f);
         glVertex3f(1.0f, -1.0f,  1.0f);
 
         // Face dessus
+        glColor3f(1.0f,0.0f, 1.0f);
         glVertex3f(-1.0f, 1.0f, -1.0f);
         glVertex3f(-1.0f, 1.0f,  1.0f);
         glVertex3f( 1.0f, 1.0f,  1.0f);
         glVertex3f( 1.0f, 1.0f, -1.0f);
 
         // Face dessous
+        glColor3f(0.0f,1.0f, 1.0f);
         glVertex3f(-1.0f, -1.0f, -1.0f);
         glVertex3f( 1.0f, -1.0f, -1.0f);
         glVertex3f( 1.0f, -1.0f,  1.0f);
