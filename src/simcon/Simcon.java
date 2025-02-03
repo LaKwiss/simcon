@@ -14,7 +14,7 @@ import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 public class Simcon {
-
+    // Test GIT 1
     // Taille de la fenêtre
     private int width = 800;
     private int height = 600;
